@@ -18,7 +18,7 @@ export interface OutboundEmail {
  */
 export async function sendEmail(message: OutboundEmail): Promise<void> {
   if (!serverEnv.RESEND_API_KEY) {
-    if (isProduction) {
+    if (isProduction && serverEnv.DEMO_MODE !== 'true') {
       throw new Error('Refusing to log an email instead of sending it in production.');
     }
     console.info(

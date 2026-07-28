@@ -1,7 +1,9 @@
 import { Card, CardBody } from '@verity/ui';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
+import { isDemoEnabled } from '@/lib/demo';
 import { getSessionUser } from '@/lib/session';
+import { DemoEntry } from './demo-entry';
 import { SignInForm } from './sign-in-form';
 
 export const metadata: Metadata = { title: 'Sign in' };
@@ -38,22 +40,29 @@ export default async function SignInPage({
     : undefined;
 
   return (
-    <main id="main" className="mx-auto flex min-h-screen max-w-md items-center px-4">
+    <main id="main" className="mx-auto flex min-h-screen max-w-md items-center px-4 py-12">
       <div className="w-full">
         <div className="mb-8">
           <p className="text-sm font-semibold tracking-wide text-slate-500">VERITY</p>
-          <h1 className="mt-2 text-2xl font-semibold text-slate-900">Sign in</h1>
+          <h1 className="mt-2 text-2xl font-semibold text-slate-900">
+            Prove a person approved this
+          </h1>
           <p className="mt-2 text-sm text-slate-600">
-            Verity confirms that a named, authorized person approved an exact action, so an email,
-            a phone call or a video call is never the last word on a payment.
+            Faces, voices and email accounts can all be imitated. Verity makes that irrelevant: the
+            real person confirms the exact amount, recipient and account with a passkey, and you get
+            a receipt that changes if any of those details do.
           </p>
         </div>
 
         <Card>
-          <CardBody>
-            <SignInForm errorMessage={errorMessage} />
-          </CardBody>
+          <CardBody>{isDemoEnabled ? <DemoEntry /> : <SignInForm errorMessage={errorMessage} />}</CardBody>
         </Card>
+
+        {isDemoEnabled ? (
+          <p className="mt-4 text-center text-xs text-slate-500">
+            This is an evaluation deployment. Sandboxes are disposable and hold no real data.
+          </p>
+        ) : null}
       </div>
     </main>
   );

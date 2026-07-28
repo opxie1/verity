@@ -50,6 +50,13 @@ const serverEnvSchema = z
      * session.
      */
     EXTENSION_ORIGINS: z.string().optional().default(''),
+
+    /**
+     * Demo mode. Gives every visitor a private sandbox organization with both
+     * a requester and an approver, so the product can be evaluated without an
+     * email account or a second person. Off unless explicitly "true".
+     */
+    DEMO_MODE: z.enum(['true', 'false']).optional().default('false'),
   })
   .superRefine((env, ctx) => {
     // `next build` runs with NODE_ENV=production while evaluating modules to
@@ -62,11 +69,18 @@ const serverEnvSchema = z
       return;
     }
     // Guardrails that only matter once real people are using the system.
-    if (!env.RESEND_API_KEY) {
+    //
+    // Demo mode is exempt from the email requirement: nobody in a sandbox is
+    // waiting on a notification, sign-in does not use email, and requiring a
+    // verified sending domain would put the demo behind exactly the barrier it
+    // exists to remove. Real deployments still cannot start without it.
+    if (!env.RESEND_API_KEY && env.DEMO_MODE !== 'true') {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['RESEND_API_KEY'],
-        message: 'RESEND_API_KEY is required in production; email cannot fall back to the log.',
+        message:
+          'RESEND_API_KEY is required in production; email cannot fall back to the log. ' +
+          'Set DEMO_MODE=true if this is an evaluation deployment with no real users.',
       });
     }
     if (!env.NEXT_PUBLIC_APP_URL.startsWith('https://')) {

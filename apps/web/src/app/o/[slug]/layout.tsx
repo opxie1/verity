@@ -3,9 +3,11 @@ import { ORG_ROLE_LABELS } from '@verity/schemas';
 import { Badge } from '@verity/ui';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
+import { DEMO_PERSONAS, isDemoEnabled, isDemoUser, personaForRole } from '@/lib/demo';
 import { membershipForSlug } from '@/lib/org';
 import { getSessionUser } from '@/lib/session';
 import { OrgNav } from './org-nav';
+import { PersonaSwitcher } from './persona-switcher';
 import { SignOutButton } from './sign-out-button';
 
 export default async function OrganizationLayout({
@@ -36,8 +38,20 @@ export default async function OrganizationLayout({
 
   const organizations = await listOrganizationsForUser(user.id);
 
+  const inDemo = isDemoEnabled && isDemoUser(user.email);
+  const actingAs = personaForRole(membership.role);
+  const other = actingAs === 'requester' ? 'approver' : 'requester';
+
   return (
     <div className="min-h-screen">
+      {inDemo ? (
+        <PersonaSwitcher
+          current={actingAs}
+          otherName={DEMO_PERSONAS[other].name.split(' ')[0] ?? 'the other person'}
+          otherRole={other}
+        />
+      ) : null}
+
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
           <div className="flex items-center gap-3">
