@@ -8,22 +8,16 @@
 generator client {
   provider = "prisma-client-js"
 
-  // Generated into the workspace rather than into node_modules/.pnpm, whose
-  // path contains a content hash. A bundler can follow a normal relative
-  // import and copy the query engine beside the output; it cannot reliably
-  // find a hashed path, which is why the engine went missing at runtime while
-  // the build itself succeeded.
-  output = "../generated/client"
-
-  // A driver adapter removes the native query engine from the picture
-  // entirely. Prisma normally ships a platform-specific `.so.node` binary that
-  // a bundler has to copy beside the output; with an adapter it talks to the
-  // database through the `pg` driver and a WebAssembly engine, both of which
-  // are ordinary imports a bundler already understands.
+  // Left at the default location inside node_modules. A custom output looked
+  // like it would help a bundler find the query engine, but it moved the client
+  // out of the directory hosting platforms special-case for Prisma, which made
+  // things worse rather than better.
   //
-  // This is also the better shape for serverless: connections go through the
-  // driver's pool rather than a process-wide engine.
-  previewFeatures = ["driverAdapters"]
+  // Both engines are built: "native" for local development, and the Amazon
+  // Linux one because that is what serverless functions run on. Generating only
+  // "native" produces a client that builds anywhere and then cannot run a
+  // single query in production.
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {

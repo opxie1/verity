@@ -22,10 +22,10 @@ const nextConfig = {
   // everything under `packages/` — including the Prisma query engine.
   outputFileTracingRoot: resolve(dirname(fileURLToPath(import.meta.url)), '../..'),
   outputFileTracingIncludes: {
-    // The engine is a native binary, not an import, so tracing cannot infer it
-    // from the code. Naming it explicitly is what stops the build succeeding
-    // and then failing on the first query.
-    '/**': ['../../packages/database/generated/client/**/*'],
+    // The query engine is a native binary, not an import, so tracing cannot
+    // infer it from the code. Naming it explicitly is what stops the build
+    // succeeding and then failing on the first query.
+    '/**': ['../../node_modules/.pnpm/@prisma+client*/node_modules/.prisma/client/*.node'],
   },
 
   poweredByHeader: false,
