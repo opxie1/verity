@@ -52,7 +52,13 @@ export async function sendEmail(message: OutboundEmail): Promise<void> {
   });
 
   if (!response.ok) {
-    // The body may echo the recipient address, so it is not included here.
-    throw new Error(`Email delivery failed with status ${response.status}`);
+    // The provider's own reason is included because without it a delivery
+    // failure is indistinguishable from a misconfigured key, and the most
+    // common cause — a test sender that may only write to its own account's
+    // address — is invisible otherwise. This is a server log, not a response.
+    const reason = await response.text().catch(() => '');
+    throw new Error(
+      `Email delivery failed with status ${response.status}: ${reason.slice(0, 400)}`,
+    );
   }
 }

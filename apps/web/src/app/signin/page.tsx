@@ -6,11 +6,20 @@ import { SignInForm } from './sign-in-form';
 
 export const metadata: Metadata = { title: 'Sign in' };
 
+/**
+ * Auth.js reports failures as a code in the query string. A generic "try
+ * again" is useless for the ones that will never succeed on retry — a refused
+ * send or a missing setting — so those say what to go and look at instead.
+ */
 const ERROR_MESSAGES: Record<string, string> = {
   Verification: 'That sign-in link has already been used or has expired. Request a new one.',
   OAuthAccountNotLinked:
     'An account already exists with that email address. Sign in with the email link instead.',
   AccessDenied: 'That account is not allowed to sign in.',
+  EmailSignin:
+    'The sign-in link could not be sent. The email provider refused it — check the server logs for the reason. A test sender can usually only deliver to the address that owns the email account.',
+  Configuration:
+    'Sign-in is not configured correctly on the server. Check the server logs; the startup check names any missing setting.',
 };
 
 export default async function SignInPage({
