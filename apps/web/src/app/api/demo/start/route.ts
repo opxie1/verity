@@ -24,6 +24,20 @@ export async function POST() {
   }
   assertDemoEnabled();
 
+  try {
+    return await createSandbox();
+  } catch (error) {
+    // Demo mode is an evaluation deployment with no real data, so the reason
+    // is returned rather than swallowed. Without it a failure here is
+    // indistinguishable from a bug in the application, and whoever is trying
+    // the product has no way to tell anyone what went wrong.
+    const reason = error instanceof Error ? error.message : String(error);
+    console.error('[verity] demo sandbox creation failed', error);
+    return NextResponse.json({ error: reason.slice(0, 500) }, { status: 500 });
+  }
+}
+
+async function createSandbox(): Promise<NextResponse> {
   const suffix = randomBytes(6).toString('hex');
 
   const organization = await prisma.$transaction(async (tx) => {

@@ -14,14 +14,21 @@ export function DemoEntry() {
     setFailure(undefined);
     try {
       const response = await fetch('/api/demo/start', { method: 'POST' });
+      const payload = (await response.json().catch(() => null)) as
+        | { organizationSlug?: string; error?: string }
+        | null;
+
       if (!response.ok) {
-        throw new Error('failed');
+        throw new Error(payload?.error ?? `The server answered ${response.status}.`);
       }
-      const result = (await response.json()) as { organizationSlug: string };
-      router.push(`/o/${result.organizationSlug}`);
+      if (!payload?.organizationSlug) {
+        throw new Error('The server did not return a sandbox.');
+      }
+
+      router.push(`/o/${payload.organizationSlug}`);
       router.refresh();
-    } catch {
-      setFailure('The demo could not be started. Refresh and try again.');
+    } catch (error) {
+      setFailure(error instanceof Error ? error.message : 'The demo could not be started.');
       setPending(false);
     }
   }

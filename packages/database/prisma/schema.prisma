@@ -6,8 +6,13 @@
 // ID, including the Auth.js adapter, which does not supply one.
 
 generator client {
-  provider        = "prisma-client-js"
-  binaryTargets   = ["native"]
+  provider = "prisma-client-js"
+  // "native" covers local development. Vercel's functions run on Amazon Linux,
+  // which needs its own query engine built at generate time — without it the
+  // client builds fine and then fails on the first query at runtime, which is
+  // easy to mistake for an application bug because pages that never touch the
+  // database still render.
+  binaryTargets   = ["native", "rhel-openssl-3.0.x"]
   previewFeatures = []
 }
 
