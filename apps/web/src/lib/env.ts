@@ -56,7 +56,14 @@ const serverEnvSchema = z
      * a requester and an approver, so the product can be evaluated without an
      * email account or a second person. Off unless explicitly "true".
      */
-    DEMO_MODE: z.enum(['true', 'false']).optional().default('false'),
+    // Accepts any obvious spelling of yes. A strict enum here meant that
+    // typing "TRUE" failed validation and took the whole server down, which is
+    // a punishing outcome for a flag whose only job is to open a demo.
+    DEMO_MODE: z
+      .string()
+      .optional()
+      .default('false')
+      .transform((value) => (['true', '1', 'yes', 'on'].includes(value.trim().toLowerCase()) ? 'true' : 'false')),
   })
   .superRefine((env, ctx) => {
     // `next build` runs with NODE_ENV=production while evaluating modules to
