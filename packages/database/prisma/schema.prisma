@@ -15,10 +15,15 @@ generator client {
   // the build itself succeeded.
   output = "../generated/client"
 
-  // "native" covers local development. Vercel's functions run on Amazon Linux
-  // and need their own engine built at generate time.
-  binaryTargets   = ["native", "rhel-openssl-3.0.x"]
-  previewFeatures = []
+  // A driver adapter removes the native query engine from the picture
+  // entirely. Prisma normally ships a platform-specific `.so.node` binary that
+  // a bundler has to copy beside the output; with an adapter it talks to the
+  // database through the `pg` driver and a WebAssembly engine, both of which
+  // are ordinary imports a bundler already understands.
+  //
+  // This is also the better shape for serverless: connections go through the
+  // driver's pool rather than a process-wide engine.
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {

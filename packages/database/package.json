@@ -16,7 +16,9 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@prisma/client": "^6.2.1"
+    "@prisma/adapter-pg": "^6.19.3",
+    "@prisma/client": "^6.2.1",
+    "pg": "^8.22.0"
   },
   "devDependencies": {
     "@verity/config": "workspace:*",
