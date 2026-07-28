@@ -84,8 +84,15 @@ function loadServerEnv() {
     const detail = parsed.error.issues
       .map((issue) => `  ${issue.path.join('.')}: ${issue.message}`)
       .join('\n');
-    // The names of the offending variables are safe to print; their values are not.
-    throw new Error(`Invalid server environment:\n${detail}`);
+    // The names of the offending variables are safe to print; their values are
+    // not. The pointer matters because this fires during `next build` as well
+    // as at runtime, and a build log is where someone deploying will meet it.
+    throw new Error(
+      `Invalid server environment:\n${detail}\n\n` +
+        'Set these where the app runs. For Vercel see docs/DEPLOYMENT.md — ' +
+        'note that Root Directory must be apps/web, and that a failed production ' +
+        'build leaves the previous deployment serving traffic.',
+    );
   }
   return parsed.data;
 }
