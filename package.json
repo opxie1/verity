@@ -1,0 +1,38 @@
+{
+  "name": "verity",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=20.11"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test && pnpm run test:integration",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,json}\"",
+    "db:generate": "pnpm --filter @verity/database run db:generate",
+    "db:migrate": "pnpm --filter @verity/database run db:migrate",
+    "db:deploy": "pnpm --filter @verity/database run db:deploy",
+    "db:studio": "pnpm --filter @verity/database run db:studio",
+    "db:seed": "pnpm --filter @verity/database run db:seed"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/pg": "^8.20.0",
+    "@verity/database": "workspace:*",
+    "@verity/domain": "workspace:*",
+    "@verity/schemas": "workspace:*",
+    "dotenv": "^16.4.7",
+    "pg": "^8.22.0",
+    "prettier": "^3.4.2",
+    "tsx": "^4.19.2",
+    "turbo": "^2.3.4",
+    "typescript": "^5.7.3",
+    "vitest": "^2.1.8"
+  }
+}

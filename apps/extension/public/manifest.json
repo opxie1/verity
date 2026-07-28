@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "Verity for Gmail",
+  "version": "0.1.0",
+  "description": "Require a named, authorized person to approve the exact action in a high-risk email, using their passkey.",
+  "minimum_chrome_version": "116",
+
+  "permissions": ["sidePanel", "storage"],
+
+  "host_permissions": [
+    "https://mail.google.com/*",
+    "http://localhost:3000/*"
+  ],
+
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+
+  "action": {
+    "default_title": "Verity"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'"
+  },
+
+  "externally_connectable": {
+    "matches": []
+  }
+}
