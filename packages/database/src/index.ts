@@ -1,4 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+// Imported from the generated directory rather than from `@prisma/client`, so
+// the query engine sits at a path the bundler can follow and copy.
+import { PrismaClient } from '../generated/client';
 
 /**
  * Next.js dev-mode hot reload re-evaluates modules, which would otherwise open
@@ -28,4 +30,4 @@ export type PrismaTransactionClient = Omit<
 
 export type DbClient = PrismaClient | PrismaTransactionClient;
 
-export * from '@prisma/client';
+export * from '../generated/client';

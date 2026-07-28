@@ -2,6 +2,7 @@ node_modules/
 .pnpm-store/
 
 # Build output
+packages/database/generated/
 dist/
 .next/
 out/

@@ -40,7 +40,11 @@ if (serverEnv.AUTH_GOOGLE_ID && serverEnv.AUTH_GOOGLE_SECRET) {
 }
 
 export const authConfig: NextAuthConfig = {
-  adapter: PrismaAdapter(prisma),
+  // The adapter's types are pinned to a client generated inside node_modules.
+  // Ours is generated to a workspace path so the query engine can be traced
+  // into the deployment. Same class at runtime; only the nominal type differs,
+  // so the cast is narrowed to exactly what the adapter accepts.
+  adapter: PrismaAdapter(prisma as unknown as Parameters<typeof PrismaAdapter>[0]),
 
   // Database sessions rather than JWTs: disabling a member must take effect on
   // their very next request, which a self-contained token cannot guarantee

@@ -17,6 +17,17 @@ const nextConfig = {
   // Prisma must not be bundled into the server output.
   serverExternalPackages: ['@prisma/client', '.prisma/client'],
 
+  // File tracing decides which files ship alongside each serverless function.
+  // In a pnpm monorepo it defaults to this app's directory, which excludes
+  // everything under `packages/` — including the Prisma query engine.
+  outputFileTracingRoot: resolve(dirname(fileURLToPath(import.meta.url)), '../..'),
+  outputFileTracingIncludes: {
+    // The engine is a native binary, not an import, so tracing cannot infer it
+    // from the code. Naming it explicitly is what stops the build succeeding
+    // and then failing on the first query.
+    '/**': ['../../packages/database/generated/client/**/*'],
+  },
+
   poweredByHeader: false,
 
   async headers() {
