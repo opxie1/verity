@@ -58,6 +58,16 @@ delivered, so sign-in links and invitations are visible in your terminal. That f
 in production, where a missing key stops the server from starting rather than silently swallowing
 an approval notice.
 
+## Deploying
+
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). Two things catch people out:
+
+- **Root Directory must be `apps/web`.** This repo holds two applications, and `apps/extension` is a
+  Chrome extension with no `index.html`. Pointing a host at it builds cleanly and then serves 404 on
+  every URL.
+- **`RP_ID` must equal your final hostname before anyone registers a passkey.** Passkeys are
+  cryptographically bound to it and do not survive a domain change.
+
 ## Tests
 
 ```bash
